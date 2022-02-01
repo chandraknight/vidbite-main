@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Campaign;
 use App\Models\History;
 use App\Models\Notifies;
 use App\Models\User;
@@ -94,8 +95,8 @@ class MainController extends Controller
         History::addVideo($current_video);
 
         $playlists = Playlist::where('u_id', Auth::id())->get();
-
-        return view('front.play', compact(['current_video', 'like','suggestedVideos', 'playlists', 'sort_comments']));
+        $campaign=Campaign::inRandomOrder()->latest()->first();
+        return view('front.play', compact(['current_video', 'like','suggestedVideos', 'playlists', 'sort_comments','campaign']));
     }
 
     public function library()

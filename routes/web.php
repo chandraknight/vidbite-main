@@ -200,7 +200,7 @@ Route::group(['middleware' => 'auth', 'web','verified'], function () {
         Route::get('play-ad', [VideoController::class,'playAd'])->name('play-ad');
     });
 
-
+    Route::get('play-ad', [VideoController::class,'playAd'])->name('play-ad');
     Route::get('/form-upload', [VideoContentController::class, 'create'])->name('uploadform');
     Route::post('/form-upload', [VideoContentController::class, 'store'])->name('uploadform');
 

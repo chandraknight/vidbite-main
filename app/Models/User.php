@@ -61,9 +61,42 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->attributes['password'] = Hash::make($value);
     }
 
+    public function isModerator(){
+        $roles = $this->roles->pluck('name')->toArray();
+        if(in_array('moderator', $roles)){
+            return true;
+        }
+        return false;
+    }
+    public function age_range()
+    {
+        if ((13 <= (int)$this->age) && ((int)$this->age <= 17)) {
+            return '13-17';
+        }
+        if ((18 <= (int)$this->age) && ((int)$this->age <= 24)) {
+            return '18-24';
+        }
+        if ((25 <= (int)$this->age) && ((int)$this->age <= 34)) {
+            return '25-34';
+        }
+        if ((35 <= (int)$this->age) && ((int)$this->age <= 44)) {
+            return '35-44';
+        }
+        if ((45 <= (int)$this->age) && ((int)$this->age <= 54)) {
+            return '45-54';
+        }
+        if ((int)$this->age >= 55) {
+            return '55+';
+        }
+    }
     public function profile()
     {
         return $this->hasOne('App\Models\UserProfle', 'u_id', 'id');
+    }
+
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class, 'user_id', 'id');
     }
 
     public function roles()

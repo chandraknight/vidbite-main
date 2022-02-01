@@ -62,7 +62,7 @@
     --------------------*/
     .chat {
         position: absolute;
-        top: 30%;
+        top: 45%;
         left: 100%;
         transform: translate(-50%, -50%);
         width: 300px;
@@ -487,10 +487,10 @@
                 </video>
                 <div id="my_overlay">
                     <div class="overlay-in">
-                        // Banner Ad Code Here.
+                        //banner add here
                     </div>
-                    <div class="overlay-close"></div>
-                    <div class="overlay-count"></div>
+                    <div class="overlay-close">Skip</div>
+                    <div class="overlay-count">count</div>
                 </div>
                 {{-- <video autoplay controls id="{{ $video->id }}" onseeked="writeVideoTime(this.id,this.currentTime);"
                     onclick="writeVideoTime(this.id,this.currentTime);"
@@ -819,10 +819,10 @@
                 });
 
                 item.addEventListener('pause', event => {
-                    // if(adPath != ''){
-                    //     $("#my_overlay").fadeIn();
-                    //     $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
-                    // }
+                    if(adPath != ''){
+                        $("#my_overlay").fadeIn();
+                        $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                    }
                     console.log('PAUSE');
                 });
 

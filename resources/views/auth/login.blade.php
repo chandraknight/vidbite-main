@@ -86,7 +86,7 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-<div class="col-md-12 contents">
+<div class="col-md-12 contents mt-10">
     <div class="row justify-content-center">
         <div class="col-md-6 bg-light border rounded py-3 ">
             <div class="mb-4 text-center">

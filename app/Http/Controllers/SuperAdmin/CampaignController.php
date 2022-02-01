@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CampaignController extends Controller
 {
@@ -56,7 +57,7 @@ class CampaignController extends Controller
             'ad_media' => 'required',
         ]);
 
-        Campaign::create($request->all() + ['remaining_budget' => $request->budget]);
+        Campaign::create($request->all() + ['remaining_budget' => $request->budget,'user_id'=>Auth::user()->id]);
         return redirect('super-admin/campaigns');
     }
 
