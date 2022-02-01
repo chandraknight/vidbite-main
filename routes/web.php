@@ -40,7 +40,7 @@ use App\Events\LiveChatEvent;
 //    return view('auth.login');
 //});
 
-Route::get('/', [MainController::class, 'home']);
+Route::get('/', [MainController::class, 'home'])->name('default');
 Route::get('check', function () {
     event(new LiveChatEvent(\Auth::user(), 'Hello, How are you'));
 });

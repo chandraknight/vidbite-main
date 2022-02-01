@@ -178,7 +178,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('home') }}">Home</a>
+                @auth()
+                    <a class="nav-link" href="{{ route('home') }}">Home</a>
+                @else
+
+                    <a class="nav-link" href="{{ route('default') }}">Home</a>
+                @endauth
+
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="{{ route('watchlist') }}">Watchlist</a>
@@ -200,173 +206,187 @@
             </div>
         </form>
         @if (Route::has('login'))
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ route('login') }}">SignIn</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ route('register') }}">Signup</a>
-            </li>
+            <ul class="navbar-nav mr-auto">
+                @auth()
+                    <li class="nav-item active">
+                        <a href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();" class="nav-link">Logout</a>
 
-        </ul>
-@endif
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
+                @else
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ route('register') }}">Register</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                @endauth
+
+
+            </ul>
+        @endif
     </div>
 </nav>
 <div class="container-fluid">
 
-@section('content')
+    @section('content')
 
-    <div id="carousalTop" class="carousel slide mt-5" data-ride="carousel">
-        <ol class="carousel-indicators">
-            @foreach ($banners as $key => $banner)
-                <li data-target="#carousalTop" data-slide-to="{{$key}}" class=" @if($key == 0) active @endif"></li>
-            @endforeach
-        </ol>
-        <div class="carousel-inner">
-            @foreach ($banners as $key => $banner)
-                <div class="carousel-item @if ($key == 0) active @endif " >
-                    <img src="{{ asset($banner->image) }}" style="width: 100% !important" class="w-100 d-block" alt="...">
-                </div>
-            @endforeach
+        <div id="carousalTop" class="carousel slide mt-5" data-ride="carousel">
+            <ol class="carousel-indicators">
+                @foreach ($banners as $key => $banner)
+                    <li data-target="#carousalTop" data-slide-to="{{$key}}" class=" @if($key == 0) active @endif"></li>
+                @endforeach
+            </ol>
+            <div class="carousel-inner">
+                @foreach ($banners as $key => $banner)
+                    <div class="carousel-item @if ($key == 0) active @endif " >
+                        <img src="{{ asset($banner->image) }}" style="width: 100% !important" class="w-100 d-block" alt="...">
+                    </div>
+                @endforeach
 
+
+            </div>
 
         </div>
-
-    </div>
     @endsection
 
 
 
 </div>
 
-    <script src="https://kit.fontawesome.com/74d240b4ae.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
-    <script src="{{ asset('assets/vendor/slick/slick.min.js') }}"></script>
+<script src="https://kit.fontawesome.com/74d240b4ae.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+<script src="{{ asset('assets/vendor/slick/slick.min.js') }}"></script>
 
 
-    <script>
+<script>
 
-        $( function() {
-            $( "#search" ).autocomplete({
-                source: function( request, response ) {
-                    // Fetch data
-                    var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-                    $.ajax({
-                        url:"{{route('autocomplete')}}",
-                        type: 'get',
-                        dataType: "json",
-                        headers: headers,
-                        data: {
-                            search: request.term
-                        },
-                        success: function( data ) {
-                            response( data );
-                        }
-                    });
-                },
-                select: function (event, ui) {
-                    // Set selection
-                    $('#search').val(ui.item.label); // display the selected text
-                    return false;
-                }
-            });
-
-            $(".slick-slider").slick({
-                slidesToShow: 4,
-                slidesToScroll: 4,
-                infinite: false,
-                responsive: [
-                    {
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 3,
-                            slidesToScroll: 3,
-                        }
+    $( function() {
+        $( "#search" ).autocomplete({
+            source: function( request, response ) {
+                // Fetch data
+                var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+                $.ajax({
+                    url:"{{route('autocomplete')}}",
+                    type: 'get',
+                    dataType: "json",
+                    headers: headers,
+                    data: {
+                        search: request.term
                     },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1
-                        }
+                    success: function( data ) {
+                        response( data );
                     }
-                ]
-            });
-
-        } );
-
-        // var path = "{{ url('autocomplete') }}";
-        // $('#search').typeahead({
-        //     minLength: 2,
-        //     source:  function (query, process) {
-        //     return $.get(path, { query: query }, function (data) {
-        //             console.log('Data',data);
-        //             return process(data);
-        //         });
-        //     }
-        // });
-
-        $('#search-form').submit(function( event ) {
-            event.preventDefault();
-            let q = $('#search').val();
-            var path = "{{ url('search') }}?q="+q;
-
-            console.log("{{request()->is('search')}}");
-            // return;
-
-            if("{{request()->is('search')}}" != 1){
-                document.location.href = path;
+                });
+            },
+            select: function (event, ui) {
+                // Set selection
+                $('#search').val(ui.item.label); // display the selected text
+                return false;
             }
-
-
         });
 
-        $(document).ready(function() {
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-                //$(".active-tab span").html(activeTab);
-                //$(".previous-tab span").html(previousTab);
-            });
+        $(".slick-slider").slick({
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            infinite: false,
+            responsive: [
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }
+            ]
         });
 
-        $(".video-list").click(function() {
-            window.location.href = $(this).data('href');
+    } );
+
+    // var path = "{{ url('autocomplete') }}";
+    // $('#search').typeahead({
+    //     minLength: 2,
+    //     source:  function (query, process) {
+    //     return $.get(path, { query: query }, function (data) {
+    //             console.log('Data',data);
+    //             return process(data);
+    //         });
+    //     }
+    // });
+
+    $('#search-form').submit(function( event ) {
+        event.preventDefault();
+        let q = $('#search').val();
+        var path = "{{ url('search') }}?q="+q;
+
+        console.log("{{request()->is('search')}}");
+        // return;
+
+        if("{{request()->is('search')}}" != 1){
+            document.location.href = path;
+        }
+
+
+    });
+
+    $(document).ready(function() {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            //$(".active-tab span").html(activeTab);
+            //$(".previous-tab span").html(previousTab);
         });
+    });
 
-        var dd_main = document.querySelector(".dd_main");
+    $(".video-list").click(function() {
+        window.location.href = $(this).data('href');
+    });
 
-        dd_main.addEventListener("click", function() {
-            this.classList.toggle("active");
-        })
+    var dd_main = document.querySelector(".dd_main");
+
+    dd_main.addEventListener("click", function() {
+        this.classList.toggle("active");
+    })
+</script>
+<!-- Scripts -->
+<script src="{{ asset('js/app.js') }}" defer></script>
+@yield('jscripts')
+
+@stack('scripts')
+@push('scripts')
+    <script>
+        $( function() {
+            $('.slick-track').addClass('float-left');
+        });
     </script>
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    @yield('jscripts')
+@endpush
+</body>
 
-    @stack('scripts')
-    @push('scripts')
-        <script>
-            $( function() {
-                $('.slick-track').addClass('float-left');
-            });
-        </script>
-        @endpush
-    </body>
-
-    </html>
+</html>
