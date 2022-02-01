@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class AdStat extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 }

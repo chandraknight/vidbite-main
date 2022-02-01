@@ -36,7 +36,7 @@
     }
     #my_overlay .overlay-close {
         width: 120px;
-        height: 40px;
+        height: 40;
         background-image:url('{{ asset("assets/images/skip-ad.svg") }}');
         background-size: contain;
         background-repeat: no-repeat;
@@ -47,7 +47,7 @@
     }
     #my_overlay .overlay-count {
         width: 120px;
-        height: 40px;
+        height: 40;
         font-size: 35px;
         color: #fff;
         bottom: 40px;
@@ -62,7 +62,7 @@
     --------------------*/
     .chat {
         position: absolute;
-        top: 45%;
+        top: 55%;
         left: 100%;
         transform: translate(-50%, -50%);
         width: 300px;
@@ -458,13 +458,11 @@
         }
     }
 </style>
-<?php
-// dd($video->video_path);
-?>
 @section('content')
     <div class="row">
         <div class="col-md-8">
             <div class="video">
+
                 @php
                     if($current_video->continueWatches->first()){
                         $v_time = round($current_video->continueWatches->first()->time);
@@ -484,13 +482,14 @@
                     <source src="{{ asset($current_video->video_path) }}" type="video/mp4">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     Your browser does not support the video tag.
+
                 </video>
                 <div id="my_overlay">
                     <div class="overlay-in">
-                        //banner add here
+                        dd($campaign)
                     </div>
-                    <div class="overlay-close">Skip</div>
-                    <div class="overlay-count">count</div>
+                    <div class="overlay-close"></div>
+                    <div class="overlay-count"></div>
                 </div>
                 {{-- <video autoplay controls id="{{ $video->id }}" onseeked="writeVideoTime(this.id,this.currentTime);"
                     onclick="writeVideoTime(this.id,this.currentTime);"
@@ -506,7 +505,6 @@
                     Your browser does not support the video tag.
                 </video> --}}
             </div>
-
         </div>
         <div id="app" class="col-md-4">
             <live-chat :video="{{ $current_video }}" :user="{{ \Auth::user() }}"></live-chat>
@@ -733,163 +731,164 @@
     </div>
 @endsection
 @section('jscripts')
-    <script>
-        function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
-            // console.log(videoId);
-            // console.log(currentTime);
+<script>
 
-            var data = {time: currentTime}; //data to send to server
-            var dataType = "json";//expected datatype from server
-            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-            $.ajax({
-                url: '/store/'+videoId,   //url of the server which stores time data
-                data: data,
-                headers: headers,
-                dataType: dataType,
-                success: function(data,status){
-                    // alert(status);
-                    // var data = JSON.parse(data)
-                    // console.log(data['message']);
-                }
-            });
+    function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
+        // console.log(videoId);
+        // console.log(currentTime);
+
+        var data = {time: currentTime}; //data to send to server
+        var dataType = "json";//expected datatype from server
+        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+        $.ajax({
+            url: '/store/'+videoId,   //url of the server which stores time data
+            data: data,
+            headers: headers,
+            dataType: dataType,
+            success: function(data,status){
+                // alert(status);
+                // var data = JSON.parse(data)
+                // console.log(data['message']);
+            }
+        });
+    }
+
+    // This function runs when page is done loading
+    $(function() {
+
+        var elements = document.getElementsByClassName("recommended-videos");
+
+        var dataType = "json";//expected datatype from server
+        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+        var adPath = '';
+        $.ajax({
+            url: '/play-ad',   //url of the server which stores time data
+            headers: headers,
+            dataType: dataType,
+            success: function(data,status){
+                adPath = `{{ asset('${data.substr(1)}') }}`;
+            },
+            async: false // <- this turns it into synchronous
+        });
+        console.log(adPath);
+        var loadVideoFunction = function(vid_id, vid_time) {
+            var myvideo = document.getElementById(vid_id);
+            videoStartTime = vid_time;
+            myvideo.currentTime = videoStartTime;
+            console.log('Current Time', myvideo.currentTime);
+            console.log('Video ID:', vid_id);
+            // $('.video').click();
+            // video = jQuery('#'+vid_id).get()[0];
+            showAd(vid_id)
+            // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
+        };
+        var showAd = function(vid_id) {
+            var myvideo = document.getElementById(vid_id);
+            if(adPath != ''){
+                $("#my_overlay").fadeIn();
+                $('.overlay-count').show();
+                $('.overlay-close').hide();
+                var count = 5;
+                var x = setInterval(function() {
+                    $('.overlay-count').html('<b>'+count+'s</b>');
+                    count--;
+                    if (count < 1) {
+                        clearInterval(x);
+                        $('.overlay-close').show();
+                        $('.overlay-count').hide();
+                    }
+                }, 1000);
+                myvideo.pause();
+                $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+            }else{
+                myvideo.play();
+            }
+
         }
 
-        // This function runs when page is done loading
-        $(function() {
+        for (var i = 0; i < elements.length; i++) {
+            var vid_id = elements[i].getAttribute("id");
+            var vid_time = elements[i].getAttribute("data-time");
+            elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
+        }
 
-            var elements = document.getElementsByClassName("recommended-videos");
-
-            var dataType = "json";//expected datatype from server
-            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-            var adPath = '';
-            $.ajax({
-                url: '/play-ad',   //url of the server which stores time data
-                headers: headers,
-                dataType: dataType,
-                success: function(data,status){
-                    adPath = `{{ asset('${data.substr(1)}') }}`;
-                },
-                async: false // <- this turns it into synchronous
+        document.querySelectorAll('.recommended-videos').forEach(item => {
+            item.addEventListener('play', event => {
+                console.log('PLAY');
             });
-            console.log(adPath);
-            var loadVideoFunction = function(vid_id, vid_time) {
-                var myvideo = document.getElementById(vid_id);
-                videoStartTime = vid_time;
-                myvideo.currentTime = videoStartTime;
-                console.log('Current Time', myvideo.currentTime);
-                console.log('Video ID:', vid_id);
-                // $('.video').click();
-                // video = jQuery('#'+vid_id).get()[0];
-                showAd(vid_id)
-                // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
-            };
-            var showAd = function(vid_id) {
-                var myvideo = document.getElementById(vid_id);
-                if(adPath != ''){
-                    $("#my_overlay").fadeIn();
-                    $('.overlay-count').show();
-                    $('.overlay-close').hide();
-                    var count = 5;
-                    var x = setInterval(function() {
-                        $('.overlay-count').html('<b>'+count+'s</b>');
-                        count--;
-                        if (count < 1) {
-                            clearInterval(x);
-                            $('.overlay-close').show();
-                            $('.overlay-count').hide();
-                        }
-                    }, 1000);
-                    myvideo.pause();
-                    $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
-                }else{
-                    myvideo.play();
+
+            item.addEventListener('pause', event => {
+                // if(adPath != ''){
+                //     $("#my_overlay").fadeIn();
+                //     $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                // }
+                console.log('PAUSE');
+            });
+
+            item.addEventListener('timeupdate', event => {
+                let req_stat = item.currentTime % 3;
+                if(req_stat <= 0.4){
+                    let vid_id = item.getAttribute("data-id");
+                    console.log(req_stat);
+                    syncWatchTime(vid_id, item.currentTime)
                 }
 
-            }
-
-            for (var i = 0; i < elements.length; i++) {
-                var vid_id = elements[i].getAttribute("id");
-                var vid_time = elements[i].getAttribute("data-time");
-                elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
-            }
-
-            document.querySelectorAll('.recommended-videos').forEach(item => {
-                item.addEventListener('play', event => {
-                    console.log('PLAY');
-                });
-
-                item.addEventListener('pause', event => {
-                    if(adPath != ''){
-                        $("#my_overlay").fadeIn();
-                        $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
-                    }
-                    console.log('PAUSE');
-                });
-
-                item.addEventListener('timeupdate', event => {
-                    let req_stat = item.currentTime % 3;
-                    if(req_stat <= 0.4){
-                        let vid_id = item.getAttribute("data-id");
-                        console.log(req_stat);
-                        syncWatchTime(vid_id, item.currentTime)
-                    }
-
-                });
-            })
-
-            function onPlayProgress(data) {
-                status.text(data.seconds + 's played');
-            }
-
-
-            $('.overlay-close').click(function () {
-                $("#my_overlay").fadeOut();
-                let vid = document.getElementById(vid_id);
-                vid.play();
             });
+        })
+
+        function onPlayProgress(data) {
+            status.text(data.seconds + 's played');
+        }
+
+
+        $('.overlay-close').click(function () {
+            $("#my_overlay").fadeOut();
+            let vid = document.getElementById(vid_id);
+            vid.play();
+        });
+    });
+
+
+    // function playVideo(id) {
+    //     $(`#${id}`).click(function() {
+    //         this.paused ? this.play() : this.pause();
+    //     });
+
+    // }
+
+    $(document).ready(function(){
+
+        $('.share').on('click', function(e){
+            e.preventDefault();
+
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(window.location.href).select();
+            document.execCommand("copy");
+            $temp.remove();
+            alert('Video URL copied to clipboard');
         });
 
 
-        // function playVideo(id) {
-        //     $(`#${id}`).click(function() {
-        //         this.paused ? this.play() : this.pause();
-        //     });
+        $('.save-to-playlist').on('click', function(e){
+            e.preventDefault();
 
-        // }
-
-        $(document).ready(function(){
-
-            $('.share').on('click', function(e){
-                e.preventDefault();
-
-                var $temp = $("<input>");
-                $("body").append($temp);
-                $temp.val(window.location.href).select();
-                document.execCommand("copy");
-                $temp.remove();
-                alert('Video URL copied to clipboard');
-            });
-
-
-            $('.save-to-playlist').on('click', function(e){
-                e.preventDefault();
-
-                $(this).siblings('form').submit();
-            });
-
-            $('.view-replies').on('click', function(e){
-                e.preventDefault();
-
-                $(this).siblings('.replies').removeClass('d-none');
-                $(this).hide();
-            });
+            $(this).siblings('form').submit();
         });
-        var $messages = $('.messages-content'),
-            d, h, m,
-            i = 0;
+
+        $('.view-replies').on('click', function(e){
+            e.preventDefault();
+
+            $(this).siblings('.replies').removeClass('d-none');
+            $(this).hide();
+        });
+    });
+    var $messages = $('.messages-content'),
+        d, h, m,
+        i = 0;
 
 
-    </script>
+</script>
 
 @endsection
 

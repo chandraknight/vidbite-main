@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Banner;
-use App\Models\Campaign;
 use App\Models\History;
 use App\Models\Notifies;
 use App\Models\User;
@@ -43,7 +41,7 @@ class MainController extends Controller
 
         //Get Recommended videos
         $recommendedVideos = VideoContent::recommended();
-        
+
         // if (!empty($SearchKeywords)) {
         //     $v_ids = VideoContent::with('user')->select("id")
         //         ->where("title", "LIKE", "%{$request->get('q')}%")
@@ -59,7 +57,7 @@ class MainController extends Controller
 
         $subscriptions = Subscriber::where('subscriber_id', '=', $user->id)->orderBy('created_at', 'asc')->pluck('account_id');
         $watchlistVideos = VideoContent::with(['views', 'user', 'continueWatches'])->wherein('u_id', $subscriptions)->inRandomOrder()->get();
-        
+
         $contWatches = ContinueWatch::where('u_id', $user_id)->orderBy('updated_at', 'desc')->pluck('v_id');
         $contWatchesVideos = VideoContent::with(['views', 'user', 'continueWatches'])->wherein('id', $contWatches)->inRandomOrder()->get();
 
@@ -77,9 +75,7 @@ class MainController extends Controller
             $video->record =  $record;
         }
 
-        $banners = Banner::orderBy('order','asc')->get();
-
-        return view('front.index', compact(['user', 'recommendedVideos', 'watchlistVideos', 'contWatchesVideos', 'trendingVideos','banners']));
+        return view('front.index', compact(['user', 'recommendedVideos', 'watchlistVideos', 'contWatchesVideos', 'trendingVideos']));
     }
 
     public function playVideo(Request $request, $id)
@@ -95,8 +91,8 @@ class MainController extends Controller
         History::addVideo($current_video);
 
         $playlists = Playlist::where('u_id', Auth::id())->get();
-        $campaign=Campaign::inRandomOrder()->latest()->first();
-        return view('front.play', compact(['current_video', 'like','suggestedVideos', 'playlists', 'sort_comments','campaign']));
+
+        return view('front.play', compact(['current_video', 'like','suggestedVideos', 'playlists', 'sort_comments']));
     }
 
     public function library()
@@ -176,7 +172,7 @@ class MainController extends Controller
 
             $video->record =  $record;
         }
-        // dd('OK'); 
+        // dd('OK');
         // dd($trendingVideos);
         return view('front.trending', compact(['user', 'trendingVideos']));
     }
@@ -193,23 +189,4 @@ class MainController extends Controller
     //         $notification->save();
     //     }
     // }
-
-    public function home()
-    {
-        $keywords = [];
-        $viewCount = View::get();
-        $searchkeywords= SearchKeywords::select('keywords')->get();
-        //dd($searchkeywords);
-        if(!empty($searchkeywords)) {
-            foreach ($searchkeywords as $value) {
-                array_push($keywords, $value);
-            }
-            //dd($keywords);
-        }
-
-        $banners = Banner::orderBy('order','asc')->get();
-
-        return view('front.home', compact([ 'banners']));
-
-    }
 }
