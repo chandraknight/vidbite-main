@@ -36,7 +36,7 @@
     }
     #my_overlay .overlay-close {
         width: 120px;
-        height: 40;
+        height: 40px;
         background-image:url('{{ asset("assets/images/skip-ad.svg") }}');
         background-size: contain;
         background-repeat: no-repeat;
@@ -47,7 +47,7 @@
     }
     #my_overlay .overlay-count {
         width: 120px;
-        height: 40;
+        height: 40px;
         font-size: 35px;
         color: #fff;
         bottom: 40px;
@@ -458,16 +458,13 @@
         }
     }
 </style>
-    <?php
-    // dd($video->video_path);
-    ?>
+<?php
+// dd($video->video_path);
+?>
 @section('content')
-
-
     <div class="row">
         <div class="col-md-8">
             <div class="video">
-
                 @php
                     if($current_video->continueWatches->first()){
                         $v_time = round($current_video->continueWatches->first()->time);
@@ -487,7 +484,6 @@
                     <source src="{{ asset($current_video->video_path) }}" type="video/mp4">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     Your browser does not support the video tag.
-
                 </video>
                 <div id="my_overlay">
                     <div class="overlay-in">
@@ -512,345 +508,389 @@
             </div>
         </div>
         <live-chat :video="{{ $current_video }}" :user="{{ \Auth::user() }}"></live-chat>
-    <div class="w-95">
-        <div class="user-details my-3">
-            <div class="d-flex justify-content-between">
-                <div class="d-flex">
-                    @if ($current_video->user->profile == null)
-                        <img src="{{ asset('assets/images/avatar-1.jpg') }}" alt="..." class="profile-image play">
-                    @else
-                        <img src="{{ asset($current_video->user->profile->profile_image) }}" alt="..." class="profile-image">
-                    @endif
+        <div class="w-95">
+            <div class="user-details my-3">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex">
+                        @if ($current_video->user->profile == null)
+                            <img src="{{ asset('assets/images/avatar-1.jpg') }}" alt="..." class="profile-image play">
+                        @else
+                            <img src="{{ asset($current_video->user->profile->profile_image) }}" alt="..." class="profile-image">
+                        @endif
 
-                    <div class="align-self-center px-3">
-                        <h4> <a href="{{ route('channel.index', $current_video->user->id) }}"
-                                class="text-light font-weight-bold">{{ $current_video->user->name }}</a></h4>
-                        <p>{{ sizeof($current_video->user->subscribers) }} Subscribers</p>
+                        <div class="align-self-center px-3">
+                            <h4> <a href="{{ route('channel.index', $current_video->user->id) }}"
+                                    class="text-light font-weight-bold">{{ $current_video->user->name }}</a></h4>
+                            <p>{{ sizeof($current_video->user->subscribers) }} Subscribers</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="engagements">
-            <h4 class="text-left" style="padding-bottom: 10px;">{{ $current_video->title }}</h4>
-            <div class="d-flex flex-column">
-                <div class="col-md-3 d-flex" style="padding-left: -11px;margin-left: -15px;">
-                    <p style="margin: 0px 20px 0px 0px;">{{ sizeof($current_video->views) }} Views</p>
-                    <p>
-                        {{ explode('-', date('M d, Y', strtotime($current_video->created_at)))[0] }}
-                    </p>
-                </div>
-                <div class="d-flex" style="padding-top: 0px;margin-top: 0px;font-size: 15px;">
-                    <div class="d-flex flex-column mx-1" style="padding-left: -29px;">
-                        @if (!empty($like))
-                        <a class="text-light" href="{{ url('dislike',request()->id) }}"><i class="fa fa-heart ml-2"></i></a>Dislike
-                        @else
-                        <a class="text-light" href="{{ url('like',request()->id) }}"><i class="fa fa-heart ml-2"></i></a>Like
-                        @endif
+            <div class="engagements">
+                <h4 class="text-left" style="padding-bottom: 10px;">{{ $current_video->title }}</h4>
+                <div class="d-flex flex-column">
+                    <div class="col-md-3 d-flex" style="padding-left: -11px;margin-left: -15px;">
+                        <p style="margin: 0px 20px 0px 0px;">{{ sizeof($current_video->views) }} Views</p>
+                        <p>
+                            {{ explode('-', date('M d, Y', strtotime($current_video->created_at)))[0] }}
+                        </p>
                     </div>
-                    <div class="d-flex flex-column mx-2" style="padding-left: -29px;">
-                        <a class="text-light share" href="#"><i class="fa fa-share ml-3"></i></a>
-                        Share
-                    </div>
-                    <div class="d-flex flex-column">
-                        @if(session()->get('success'))
-                            <a class="text-light" href="#"><i class="fa fa-check ml-2"></i></a>
-                            Saved
-                        @else
-                        <a class="text-light dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-plus ml-2"></i></a>
-                        Save
-                        <ul class="dropdown-menu" style="max-width: 150px;">
-                            @if($playlists->count())
-                                @foreach($playlists as $playlist)
-                                    <li>
-                                        <a href="" class="save-to-playlist">{{ $playlist->playlist_name }}</a>
-                                        <form action="{{ route('channel.assignVideoToPlaylist', $playlist->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="video_id" value="{{ $current_video->id }}">
-                                        </form>
-                                    </li>
-                                @endforeach
+                    <div class="d-flex" style="padding-top: 0px;margin-top: 0px;font-size: 15px;">
+                        <div class="d-flex flex-column mx-1" style="padding-left: -29px;">
+                            @if (!empty($like))
+                                <a class="text-light" href="{{ url('dislike',request()->id) }}"><i class="fa fa-heart ml-2"></i></a>Dislike
                             @else
-                                <li>No playlist found</li>
+                                <a class="text-light" href="{{ url('like',request()->id) }}"><i class="fa fa-heart ml-2"></i></a>Like
                             @endif
-                        </ul>
-                        @endif
-                    </div>
-                    @php
-                        $subscribe = false;
-                    @endphp
-                    @foreach (auth()->user()->subscribers as $item)
-                        @if ($item->pivot->subscriber_id == auth()->id())
-                            @php
-                                $subscribe = true;
-                            @endphp
-                            <div class="d-flex flex-column mx-3">
-                                <a href="{{ route('channel.unsubscribe', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}"
-                                    class="text-light dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa {{ $item->pivot->notifications ? 'fa-bell' : 'fa-bell-slash' }} ml-4"></i>
-                                </a>
-                                Subscribed
+                        </div>
+                        <div class="d-flex flex-column mx-2" style="padding-left: -29px;">
+                            <a class="text-light share" href="#"><i class="fa fa-share ml-3"></i></a>
+                            Share
+                        </div>
+                        <div class="d-flex flex-column">
+                            @if(session()->get('success'))
+                                <a class="text-light" href="#"><i class="fa fa-check ml-2"></i></a>
+                                Saved
+                            @else
+                                <a class="text-light dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-plus ml-2"></i></a>
+                                Save
                                 <ul class="dropdown-menu" style="max-width: 150px;">
-                                    <li>
-                                        <a href="{{ route('channel.changeNotificationSettings', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}">
-                                            <i class="fa fa-bell ml-4"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('channel.changeNotificationSettings', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}">
-                                            <i class="fa fa-bell-slash ml-4"></i>
-                                        </a>
-                                    </li>
+                                    @if($playlists->count())
+                                        @foreach($playlists as $playlist)
+                                            <li>
+                                                <a href="" class="save-to-playlist">{{ $playlist->playlist_name }}</a>
+                                                <form action="{{ route('channel.assignVideoToPlaylist', $playlist->id) }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="video_id" value="{{ $current_video->id }}">
+                                                </form>
+                                            </li>
+                                        @endforeach
+                                    @else
+                                        <li>No playlist found</li>
+                                    @endif
                                 </ul>
+                            @endif
+                        </div>
+                        @php
+                            $subscribe = false;
+                        @endphp
+                        @foreach (auth()->user()->subscribers as $item)
+                            @if ($item->pivot->subscriber_id == auth()->id())
+                                @php
+                                    $subscribe = true;
+                                @endphp
+                                <div class="d-flex flex-column mx-3">
+                                    <a href="{{ route('channel.unsubscribe', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}"
+                                       class="text-light dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa {{ $item->pivot->notifications ? 'fa-bell' : 'fa-bell-slash' }} ml-4"></i>
+                                    </a>
+                                    Subscribed
+                                    <ul class="dropdown-menu" style="max-width: 150px;">
+                                        <li>
+                                            <a href="{{ route('channel.changeNotificationSettings', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}">
+                                                <i class="fa fa-bell ml-4"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('channel.changeNotificationSettings', [$item->pivot->subscriber_id, $item->pivot->account_id]) }}">
+                                                <i class="fa fa-bell-slash ml-4"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @endif
+                        @endforeach
+                        @if (!$subscribe)
+                            <div class="d-flex flex-column mx-3">
+                                <a href="{{ route('channel.subscribe', auth()->user()->id) }}" class="text-light">
+                                    <i class="fa fa-bell ml-4"></i>
+                                </a>
+                                Subscribe
                             </div>
                         @endif
-                    @endforeach
-                    @if (!$subscribe)
-                        <div class="d-flex flex-column mx-3">
-                            <a href="{{ route('channel.subscribe', auth()->user()->id) }}" class="text-light">
-                                <i class="fa fa-bell ml-4"></i>
-                            </a>
-                            Subscribe
-                        </div>
-                    @endif
-
-
+                    </div>
                 </div>
             </div>
-        </div>
-        <hr>
-        <div class="videos mt-3">
-            <div class="tabs">
-                <ul id="myTab" class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a href="#suggested" class="nav-link active" data-toggle="tab">Suggested</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#comments" class="nav-link" data-toggle="tab">Comments</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#details" class="nav-link" data-toggle="tab">Details</a>
-                    </li>
-                </ul>
+            <hr>
+            <div class="videos mt-3">
+                <div class="tabs">
+                    <ul id="myTab" class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a href="#suggested" class="nav-link active" data-toggle="tab">Suggested</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#comments" class="nav-link" data-toggle="tab">Comments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#details" class="nav-link" data-toggle="tab">Details</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-
-
-
-        <div class="tab-content">
-        <div class="tab-pane fade show active" id="suggested" style="padding-left: 0px;">
-            <div class="slick-slider">
-                <div class="row">
-                @foreach ($suggestedVideos as $video)
-                <div class="col-3 video-box">
-                        <div class="boxImg">
-                        <img src="{{ asset($video->thumbnail) }}" data-href="{{ URL::to('/video', $video->id) }}"
-                            class="video-list clickable" />
-                        {{-- <video controls width='100%' id="recommendedVideoPlayer{{ $video->record->id }}" height='200px'
-                        onclick="playVideo(this.id);">
-                        <source src="{{ asset($video->record->video_path) }}">
-                        </video> --}}
-                        <div class="pt-3">
-                            <!-- <div class="title">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="suggested" style="padding-left: 0px;">
+                    <div class="slick-slider">
+                        <div class="row">
+                            @foreach ($suggestedVideos as $video)
+                                <div class="col-3 video-box">
+                                    <div class="boxImg">
+                                        <img src="{{ asset($video->thumbnail) }}" data-href="{{ URL::to('/video', $video->id) }}"
+                                             class="video-list clickable" />
+                                        {{--                                        --}}{{-- <video controls width='100%' id="recommendedVideoPlayer{{ $video->record->id }}" height='200px'--}}
+                                        {{--                                        onclick="playVideo(this.id);">--}}
+                                        {{--                                        <source src="{{ asset($video->record->video_path) }}">--}}
+                                        {{--                                        </video> --}}
+                                        <div class="pt-3">
+                                        <!-- <div class="title">
                                 <div>
                                     {{ $video->title }}
-                                    <p class="float-right">
+                                                <p class="float-right">
                                         @if (isset($video->views))
-                                        {{ sizeof($video->views) }} Views
+                                            {{ sizeof($video->views) }} Views
                                         @endif
-                                    </p>
-                                </div>
-                            </div> -->
-                            <div class="details mt-1">
-                                <div class="profile-pic">
-                                    <img src="{{ asset('assets/front/images/dummy.jpg') }}" alt="">
-                                </div>
-                                <div class="video-details">
-                                    <div>{{ $video->title }}</div>
-                                    <div class="channel">
-                                        <a href="{{ route('channel.index', $video->user->id) }}" class="color-white">
-                                            <span class="text-capitalize">{{ $video->user->name }}</span>
-                                        </a>
+                                                </p>
+                                            </div>
+                                        </div> -->
+                                            <div class="details mt-1">
+                                                <div class="profile-pic">
+                                                    <img src="{{ asset('assets/front/images/dummy.jpg') }}" alt="">
+                                                </div>
+                                                <div class="video-details">
+                                                    <div>{{ $video->title }}</div>
+                                                    <div class="channel">
+                                                        <a href="{{ route('channel.index', $video->user->id) }}" class="color-white">
+                                                            <span class="text-capitalize">{{ $video->user->name }}</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <p class="ml-auto">
+                                                    @if (isset($video->views))
+                                                        {{ sizeof($video->views) }} Views
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <p class="ml-auto">
-                                    @if (isset($video->views))
-                                    {{ sizeof($video->views) }} Views
-                                    @endif
-                                </p>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-                @endforeach
+
+                <div class="tab-pane fade text-left" id="comments">
+
+                    <div class="float-left">
+                        Sort Comments<a class="text-light dropdown-toggle" href="" data-toggle="dropdown"><i class="fa fa-dropdown ml-2"></i></a>
+                        <ul class="dropdown-menu" style="max-width: 150px;">
+                            <li>
+                                <a href="{{ url('video/' . $current_video->id . '?sort_comments=newest') }}" class="newest-comments">Newest First</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('video/' . $current_video->id . '?sort_comments=top') }}" class="top-comments">Top Comments</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <br>
+
+                    @if($sort_comments == 'newest')
+
+                        @include('front.videos.commentsDisplay', ['comments' => $current_video->comments->sortByDesc('created_at') , 'video_id' => $current_video->id])
+
+                    @else
+
+                        @include('front.videos.commentsDisplay', ['comments' => $current_video->comments , 'video_id' => $current_video->id])
+
+                    @endif
+
+                    <hr>
+                    <h4 class="text-left">Add Comment</h4>
+                    <form action="{{ route('comments.store') }}" method="POST" class="col-md-12 p-0">
+                        @csrf
+                        <div class="form-group">
+                            <textarea name="body" class="form-control"></textarea>
+                            <input type="hidden" name="video_id" value="{{ $current_video->id }}">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Add Comment</button>
+                        </div>
+                    </form>
+                    {{-- {{ $video->comments }} --}}
+                </div>
+
+                <div class="tab-pane fade" id="details">
+
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane fade text-left" id="comments">
-
-            <div class="float-left">
-                Sort Comments<a class="text-light dropdown-toggle" href="" data-toggle="dropdown"><i class="fa fa-dropdown ml-2"></i></a>
-                <ul class="dropdown-menu" style="max-width: 150px;">
-                    <li>
-                        <a href="{{ url('video/' . $current_video->id . '?sort_comments=newest') }}" class="newest-comments">Newest First</a>
-                    </li>
-                    <li>
-                        <a href="{{ url('video/' . $current_video->id . '?sort_comments=top') }}" class="top-comments">Top Comments</a>
-                    </li>
-                </ul>
-            </div>
-            <br>
-
-            @if($sort_comments == 'newest')
-            
-                @include('front.videos.commentsDisplay', ['comments' => $current_video->comments->sortByDesc('created_at') , 'video_id' => $current_video->id])
-
-            @else
-
-                @include('front.videos.commentsDisplay', ['comments' => $current_video->comments , 'video_id' => $current_video->id])
-
-            @endif
-
-            <hr>
-            <h4 class="text-left">Add Comment</h4>
-            <form action="{{ route('comments.store') }}" method="POST" class="col-md-12 p-0">
-                @csrf
-                <div class="form-group">
-                    <textarea name="body" class="form-control"></textarea>
-                    <input type="hidden" name="video_id" value="{{ $current_video->id }}">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success">Add Comment</button>
-                </div>
-            </form>
-            {{-- {{ $video->comments }} --}}
-        </div>
-
-        <div class="tab-pane fade" id="details">
-
-        </div>
-    </div>
     </div>
 @endsection
-
 @section('jscripts')
+    <script>
+        function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
+            // console.log(videoId);
+            // console.log(currentTime);
 
-<script>
-
-    function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
-        // console.log(videoId);
-        // console.log(currentTime);
-
-        var data = {time: currentTime}; //data to send to server 
-        var dataType = "json";//expected datatype from server 
-        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-        $.ajax({   
-            url: '/store/'+videoId,   //url of the server which stores time data   
-            data: data,
-            headers: headers,
-            dataType: dataType,
-            success: function(data,status){
+            var data = {time: currentTime}; //data to send to server
+            var dataType = "json";//expected datatype from server
+            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+            $.ajax({
+                url: '/store/'+videoId,   //url of the server which stores time data
+                data: data,
+                headers: headers,
+                dataType: dataType,
+                success: function(data,status){
                     // alert(status);
                     // var data = JSON.parse(data)
                     // console.log(data['message']);
-            }   
-        });
-    }
-
-    $(function() {
-
-        var elements = document.getElementsByClassName("recommended-videos");
-
-        var loadVideoFunction = function(vid_id, vid_time) {
-            let myvideo = document.getElementById(vid_id);
-            videoStartTime = vid_time;
-            myvideo.currentTime = videoStartTime;
-            console.log('Current Time', myvideo.currentTime);
-            console.log('Video ID:', vid_id);
-            // $('.video').click();
-            // video = jQuery('#'+vid_id).get()[0];
-            myvideo.play();
-            // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
-        };
-
-        for (var i = 0; i < elements.length; i++) {
-            var vid_id = elements[i].getAttribute("id");
-            var vid_time = elements[i].getAttribute("data-time");
-            elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
+                }
+            });
         }
 
-        document.querySelectorAll('.recommended-videos').forEach(item => {
-            item.addEventListener('play', event => {
-                console.log('PLAY');
-            });
+        // This function runs when page is done loading
+        $(function() {
 
-            item.addEventListener('pause', event => {
-                console.log('PAUSE');                
-            });
+            var elements = document.getElementsByClassName("recommended-videos");
 
-            item.addEventListener('timeupdate', event => {
-                let req_stat = item.currentTime % 3;
-                if(req_stat <= 0.4){
-                    let vid_id = item.getAttribute("data-id");
-                    console.log(req_stat);
-                    syncWatchTime(vid_id, item.currentTime)
+            var dataType = "json";//expected datatype from server
+            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+            var adPath = '';
+            $.ajax({
+                url: '/play-ad',   //url of the server which stores time data
+                headers: headers,
+                dataType: dataType,
+                success: function(data,status){
+                    adPath = `{{ asset('${data.substr(1)}') }}`;
+                },
+                async: false // <- this turns it into synchronous
+            });
+            console.log(adPath);
+            var loadVideoFunction = function(vid_id, vid_time) {
+                var myvideo = document.getElementById(vid_id);
+                videoStartTime = vid_time;
+                myvideo.currentTime = videoStartTime;
+                console.log('Current Time', myvideo.currentTime);
+                console.log('Video ID:', vid_id);
+                // $('.video').click();
+                // video = jQuery('#'+vid_id).get()[0];
+                showAd(vid_id)
+                // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
+            };
+            var showAd = function(vid_id) {
+                var myvideo = document.getElementById(vid_id);
+                if(adPath != ''){
+                    $("#my_overlay").fadeIn();
+                    $('.overlay-count').show();
+                    $('.overlay-close').hide();
+                    var count = 5;
+                    var x = setInterval(function() {
+                        $('.overlay-count').html('<b>'+count+'s</b>');
+                        count--;
+                        if (count < 1) {
+                            clearInterval(x);
+                            $('.overlay-close').show();
+                            $('.overlay-count').hide();
+                        }
+                    }, 1000);
+                    myvideo.pause();
+                    $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                }else{
+                    myvideo.play();
                 }
 
+            }
+
+            for (var i = 0; i < elements.length; i++) {
+                var vid_id = elements[i].getAttribute("id");
+                var vid_time = elements[i].getAttribute("data-time");
+                elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
+            }
+
+            document.querySelectorAll('.recommended-videos').forEach(item => {
+                item.addEventListener('play', event => {
+                    console.log('PLAY');
+                });
+
+                item.addEventListener('pause', event => {
+                    // if(adPath != ''){
+                    //     $("#my_overlay").fadeIn();
+                    //     $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                    // }
+                    console.log('PAUSE');
+                });
+
+                item.addEventListener('timeupdate', event => {
+                    let req_stat = item.currentTime % 3;
+                    if(req_stat <= 0.4){
+                        let vid_id = item.getAttribute("data-id");
+                        console.log(req_stat);
+                        syncWatchTime(vid_id, item.currentTime)
+                    }
+
+                });
+            })
+
+            function onPlayProgress(data) {
+                status.text(data.seconds + 's played');
+            }
+
+
+            $('.overlay-close').click(function () {
+                $("#my_overlay").fadeOut();
+                let vid = document.getElementById(vid_id);
+                vid.play();
             });
-        })
-
-        function onPlayProgress(data) {
-            status.text(data.seconds + 's played');
-        }
-
-    });
-
-
-    // function playVideo(id) {
-    //     $(`#${id}`).click(function() {
-    //         this.paused ? this.play() : this.pause();
-    //     });
-
-    // }
-
-    $(document).ready(function(){
-
-        $('.share').on('click', function(e){
-            e.preventDefault();
-
-            var $temp = $("<input>");
-            $("body").append($temp);
-            $temp.val(window.location.href).select();
-            document.execCommand("copy");
-            $temp.remove();
-            alert('Video URL copied to clipboard');
         });
 
 
-        $('.save-to-playlist').on('click', function(e){
-            e.preventDefault();
+        // function playVideo(id) {
+        //     $(`#${id}`).click(function() {
+        //         this.paused ? this.play() : this.pause();
+        //     });
 
-            $(this).siblings('form').submit();
+        // }
+
+        $(document).ready(function(){
+
+            $('.share').on('click', function(e){
+                e.preventDefault();
+
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(window.location.href).select();
+                document.execCommand("copy");
+                $temp.remove();
+                alert('Video URL copied to clipboard');
+            });
+
+
+            $('.save-to-playlist').on('click', function(e){
+                e.preventDefault();
+
+                $(this).siblings('form').submit();
+            });
+
+            $('.view-replies').on('click', function(e){
+                e.preventDefault();
+
+                $(this).siblings('.replies').removeClass('d-none');
+                $(this).hide();
+            });
         });
+        var $messages = $('.messages-content'),
+            d, h, m,
+            i = 0;
 
-        $('.view-replies').on('click', function(e){
-            e.preventDefault();
 
-            $(this).siblings('.replies').removeClass('d-none');
-            $(this).hide();
-        });
-    });
-
-</script>
+    </script>
 
 @endsection
 
 @push('scripts')
     <script>
-    $( function() {
-        $('.slick-track').addClass('float-left');
-    });
+        $( function() {
+            $('.slick-track').addClass('float-left');
+        });
     </script>
 @endpush

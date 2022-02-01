@@ -199,32 +199,16 @@ class MainController extends Controller
         $viewCount = View::get();
         $searchkeywords= SearchKeywords::select('keywords')->get();
         //dd($searchkeywords);
-        if(!empty($searchkeywords)){
-            foreach($searchkeywords as $value)
-            {
-                array_push($keywords,$value);
+        if(!empty($searchkeywords)) {
+            foreach ($searchkeywords as $value) {
+                array_push($keywords, $value);
             }
             //dd($keywords);
         }
 
-        $recommendedVideos = VideoContent::recommended();
-
-        $trendingVideos = DB::table('video_contents')
-            ->join('continue_watches', 'video_contents.id', '=', 'continue_watches.v_id')
-            ->select('v_id', DB::raw('count(continue_watches.id) as count'))
-            ->groupBy('v_id')
-            ->orderBy('count', 'desc')
-            ->get();
-
-        foreach ($trendingVideos as $key => $video) {
-            $record = VideoContent::where('id', $video->v_id)
-                ->get()->first();
-            $video->record =  $record;
-        }
-
         $banners = Banner::orderBy('order','asc')->get();
 
-        return view('front.home', compact([ 'recommendedVideos', 'trendingVideos','banners']));
+        return view('front.home', compact([ 'banners']));
 
     }
 }
