@@ -44,19 +44,9 @@ class VideoContent extends Model
         // return $this->hasMany('App\Models\View', 'v_id', 'id');
     }
 
-    public function likes()
+    public function messages()
     {
-        return  $this->hasMany('App\Models\VideoLike', 'video_id', 'id')->latest();
-        // return $this->hasMany('App\Models\ContinueWatch', 'v_id', 'id')->get();        
-        // return $this->hasMany('App\Models\View', 'v_id', 'id');
-    }
-
-    public function totalViews(){
-        return $this->views()->count();
-    }
-
-    public function totalLikes(){
-        return $this->likes()->count();
+        return $this->hasMany(Chats::class, 'video_id', 'id');
     }
 
     public function histories()
@@ -102,7 +92,7 @@ class VideoContent extends Model
         $videoQuery = VideoContent::query();
         $videoQuery->whereIn('category_id', $catIds);
         $videoQuery->whereHas('video_tags', function($q) use($tagIds) {
-           $q->whereIn('tag_id', $tagIds);
+            $q->whereIn('tag_id', $tagIds);
         });
         foreach ($titles as $title){
             if(!isset($title))

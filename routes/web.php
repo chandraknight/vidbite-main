@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\VerifyUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Events\LiveChatEvent;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,10 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::get('/', [MainController::class, 'home']);
+Route::get('check', function () {
+    event(new LiveChatEvent(\Auth::user(), 'Hello, How are you'));
+});
+
 // Public Routes
 Route::get('test', function () {
 

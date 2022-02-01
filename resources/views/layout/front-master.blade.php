@@ -270,64 +270,64 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
-    <script src="{{ asset('assets/vendor/slick/slick.min.js') }}"></script>
+    <script src="{{ asset('js/slick.min.js') }}"></script>
 
 
     <script>
 
         $( function() {
-            $( "#search" ).autocomplete({
-                source: function( request, response ) {
-                    // Fetch data
-                    var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-                    $.ajax({
-                        url:"{{route('autocomplete')}}",
-                        type: 'get',
-                        dataType: "json",
-                        headers: headers,
-                        data: {
-                            search: request.term
-                        },
-                        success: function( data ) {
-                        response( data );
-                        }
-                    });
-                },
-                select: function (event, ui) {
-                    // Set selection
-                    $('#search').val(ui.item.label); // display the selected text
-                    return false;
-                }
-            });
+            {{--$( "#search" ).autocomplete({--}}
+            {{--    source: function( request, response ) {--}}
+            {{--        // Fetch data--}}
+            {{--        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};--}}
+            {{--        $.ajax({--}}
+            {{--            url:"{{route('autocomplete')}}",--}}
+            {{--            type: 'get',--}}
+            {{--            dataType: "json",--}}
+            {{--            headers: headers,--}}
+            {{--            data: {--}}
+            {{--                search: request.term--}}
+            {{--            },--}}
+            {{--            success: function( data ) {--}}
+            {{--            response( data );--}}
+            {{--            }--}}
+            {{--        });--}}
+            {{--    },--}}
+            {{--    select: function (event, ui) {--}}
+            {{--        // Set selection--}}
+            {{--        $('#search').val(ui.item.label); // display the selected text--}}
+            {{--        return false;--}}
+            {{--    }--}}
+            {{--});--}}
 
-            $(".slick-slider").slick({
-                slidesToShow: 4,
-                slidesToScroll: 4,
-                infinite: false,
-                responsive: [
-                    {
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 3,
-                            slidesToScroll: 3,
-                        }
-                    },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1
-                        }
-                    }
-                ]
-            });
+            // $(".slick-slider").slick({
+            //     slidesToShow: 4,
+            //     slidesToScroll: 4,
+            //     infinite: false,
+            //     responsive: [
+            //         {
+            //             breakpoint: 1024,
+            //             settings: {
+            //                 slidesToShow: 3,
+            //                 slidesToScroll: 3,
+            //             }
+            //         },
+            //         {
+            //             breakpoint: 600,
+            //             settings: {
+            //                 slidesToShow: 2,
+            //                 slidesToScroll: 2
+            //             }
+            //         },
+            //         {
+            //             breakpoint: 480,
+            //             settings: {
+            //                 slidesToShow: 1,
+            //                 slidesToScroll: 1
+            //             }
+            //         }
+            //     ]
+            // });
 
         } );
         

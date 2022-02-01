@@ -62,8 +62,8 @@
     --------------------*/
     .chat {
         position: absolute;
-        top: 55%;
-        left: 45%;
+        top: 30%;
+        left: 100%;
         transform: translate(-50%, -50%);
         width: 300px;
         height: 70vh;
@@ -506,8 +506,14 @@
                     Your browser does not support the video tag.
                 </video> --}}
             </div>
+
         </div>
-        <live-chat :video="{{ $current_video }}" :user="{{ \Auth::user() }}"></live-chat>
+        <div id="app" class="col-md-4">
+            <live-chat :video="{{ $current_video }}" :user="{{ \Auth::user() }}"></live-chat>
+        </div>
+
+
+
         <div class="w-95">
             <div class="user-details my-3">
                 <div class="d-flex justify-content-between">

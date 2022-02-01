@@ -1,5 +1,6 @@
 <template>
   <div class="col-md-4" style="padding-left: 0 !important">
+    test
     <div class="chat">
       <div class="chat-title">
         <h1>{{ user.name }}</h1>
@@ -33,7 +34,6 @@
       </div>
     </div>
     <div class="bg"></div>
-
   </div>
 </template>
 
