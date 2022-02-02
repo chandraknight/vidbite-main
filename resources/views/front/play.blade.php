@@ -731,179 +731,189 @@
     </div>
 @endsection
 @section('jscripts')
-<script>
+    <script>
 
-    function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
-        // console.log(videoId);
-        // console.log(currentTime);
+        function syncWatchTime(videoId, currentTime){//pass video id to this function where you call it.
+            // console.log(videoId);
+            // console.log(currentTime);
 
-        var data = {time: currentTime}; //data to send to server
-        var dataType = "json";//expected datatype from server
-        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-        $.ajax({
-            url: '/store/'+videoId,   //url of the server which stores time data
-            data: data,
-            headers: headers,
-            dataType: dataType,
-            success: function(data,status){
-                // alert(status);
-                // var data = JSON.parse(data)
-                // console.log(data['message']);
-            }
-        });
-    }
-
-    // This function runs when page is done loading
-    $(document).ready(function() {
-
-        var elements = document.getElementsByClassName("recommended-videos");
-
-        // var dataType = "json";//expected datatype from server
-        var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
-        var adPath = '';
-
-        $.ajax({
-            url: '/play-ad',   //url of the server which stores time data
-            headers: headers,
-            // dataType: dataType,
-            success: function(data){
-
-                adPath = `{{ asset('${data.substr(1)}') }}`;
-
-            },
-            error:  function(data,status){
-
-              console.log('response',data);
-              console.log('status',status);
-            },
-            async: false // <- this turns it into synchronous
-        });
-
-        var loadVideoFunction = function(vid_id, vid_time) {
-            var myvideo = document.getElementById(vid_id);
-            videoStartTime = vid_time;
-            myvideo.currentTime = videoStartTime;
-
-            // $('.video').click();
-            // video = jQuery('#'+vid_id).get()[0];
-            showAd(vid_id)
-            // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
-        };
-        var showAd = function(vid_id) {
-
-            var myvideo = document.getElementById(vid_id);
-            if(adPath != ''){
-                $("#my_overlay").fadeIn();
-                $('.overlay-count').show();
-                $('.overlay-close').hide();
-                var count = 5;
-                var x = setInterval(function() {
-                    $('.overlay-count').html('<b>'+count+'s</b>');
-                    count--;
-                    if (count < 1) {
-                        clearInterval(x);
-                        $('.overlay-close').show();
-                        $('.overlay-count').hide();
-                    }
-                }, 1000);
-                myvideo.pause();
-
-                $('.overlay-in').html(`
-                    '<video  controls   src="${adPath}" id="addedVideo" autoplay>
-                    <source src="${adPath}" type="video/mp4"></video>`);
-
-               document.getElementById('addedVideo').play();
-
-            }else{
-                myvideo.play();
-            }
-
+            var data = {time: currentTime}; //data to send to server
+            var dataType = "json";//expected datatype from server
+            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+            $.ajax({
+                url: '/store/'+videoId,   //url of the server which stores time data
+                data: data,
+                headers: headers,
+                dataType: dataType,
+                success: function(data,status){
+                    // alert(status);
+                    // var data = JSON.parse(data)
+                    // console.log(data['message']);
+                }
+            });
         }
 
-        for (var i = 0; i < elements.length; i++) {
-            var vid_id = elements[i].getAttribute("id");
-            var vid_time = elements[i].getAttribute("data-time");
-            elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
-        }
+        // This function runs when page is done loading
+        $(document).ready(function() {
 
-        document.querySelectorAll('.recommended-videos').forEach(item => {
-            item.addEventListener('play', event => {
-                console.log('PLAY');
+            var elements = document.getElementsByClassName("recommended-videos");
+
+            // var dataType = "json";//expected datatype from server
+            var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
+            var adPath = '';
+
+            $.ajax({
+                url: '/play-ad',   //url of the server which stores time data
+                headers: headers,
+                // dataType: dataType,
+                success: function(data){
+
+                    adPath = `{{ asset('${data.substr(1)}') }}`;
+
+                },
+                error:  function(data,status){
+
+                    console.log('response',data);
+                    console.log('status',status);
+                },
+                async: false // <- this turns it into synchronous
             });
 
-            item.addEventListener('pause', event => {
-                // if(adPath != ''){
-                //     $("#my_overlay").fadeIn();
-                //     $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
-                // }
-                console.log('PAUSE');
-            });
+            var loadVideoFunction = function(vid_id, vid_time) {
+                var myvideo = document.getElementById(vid_id);
+                videoStartTime = vid_time;
+                myvideo.currentTime = videoStartTime;
 
-            item.addEventListener('timeupdate', event => {
-                let req_stat = item.currentTime % 3;
-                if(req_stat <= 0.4){
-                    let vid_id = item.getAttribute("data-id");
-                    console.log(req_stat);
-                    syncWatchTime(vid_id, item.currentTime)
+                // $('.video').click();
+                // video = jQuery('#'+vid_id).get()[0];
+                showAd(vid_id)
+                // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
+            };
+            var showAd = function(vid_id) {
+
+                var myvideo = document.getElementById(vid_id);
+                if(adPath != ''){
+                    $("#my_overlay").fadeIn();
+                    $('.overlay-count').show();
+                    $('.overlay-close').hide();
+                    var count = 5;
+                    var x = setInterval(function() {
+                        $('.overlay-count').html('<b>'+count+'s</b>');
+                        count--;
+                        if (count < 1) {
+                            clearInterval(x);
+                            $('.overlay-close').show();
+                            $('.overlay-count').hide();
+                        }
+                    }, 1000);
+                    myvideo.pause();
+
+                    // // $('.overlay-in').html(`<iframe>
+                    // //     '<video controls autoplay src="${adPath}" id="addedVideo">
+                    //     <source src="${adPath}" type="video/mp4"></video></frame>`);
+        /*            $('.overlay-in').html(`<video controls autoplay  src="${adPath}" id="addedVideo">
+                    <source src="${adPath}"  type="video/mp4">
+ <input type="hidden" name="_token" value="+{{csrf_token()}}+" />
+
+</video>`);*/
+                    // $("#addedVideo").trigger('play')
+                    $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                    //
+                    //
+                    // document.getElementById('addedVideo').play();
+
+
+
+                }else{
+                    myvideo.play();
                 }
 
+            }
+
+            for (var i = 0; i < elements.length; i++) {
+                var vid_id = elements[i].getAttribute("id");
+                var vid_time = elements[i].getAttribute("data-time");
+                elements[i].addEventListener('loadedmetadata', loadVideoFunction(vid_id, vid_time), false);
+            }
+
+            document.querySelectorAll('.recommended-videos').forEach(item => {
+                item.addEventListener('play', event => {
+                    console.log('PLAY');
+                });
+
+                item.addEventListener('pause', event => {
+                    // if(adPath != ''){
+                    //     $("#my_overlay").fadeIn();
+                    //     $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+                    // }
+                    console.log('PAUSE');
+                });
+
+                item.addEventListener('timeupdate', event => {
+                    let req_stat = item.currentTime % 3;
+                    if(req_stat <= 0.4){
+                        let vid_id = item.getAttribute("data-id");
+                        console.log(req_stat);
+                        syncWatchTime(vid_id, item.currentTime)
+                    }
+
+                });
+            })
+
+            function onPlayProgress(data) {
+                status.text(data.seconds + 's played');
+            }
+
+
+            $('.overlay-close').click(function () {
+                $('.overlay-in').html('');
+                $("#my_overlay").fadeOut();
+                let vid = document.getElementById(vid_id);
+                vid.play();
             });
-        })
-
-        function onPlayProgress(data) {
-            status.text(data.seconds + 's played');
-        }
-
-
-        $('.overlay-close').click(function () {
-            $('.overlay-in').html('');
-            $("#my_overlay").fadeOut();
-            let vid = document.getElementById(vid_id);
-            vid.play();
-        });
-    });
-
-
-    // function playVideo(id) {
-    //     $(`#${id}`).click(function() {
-    //         this.paused ? this.play() : this.pause();
-    //     });
-
-    // }
-
-    $(document).ready(function(){
-
-        $('.share').on('click', function(e){
-            e.preventDefault();
-
-            var $temp = $("<input>");
-            $("body").append($temp);
-            $temp.val(window.location.href).select();
-            document.execCommand("copy");
-            $temp.remove();
-            alert('Video URL copied to clipboard');
         });
 
 
-        $('.save-to-playlist').on('click', function(e){
-            e.preventDefault();
+        // function playVideo(id) {
+        //     $(`#${id}`).click(function() {
+        //         this.paused ? this.play() : this.pause();
+        //     });
 
-            $(this).siblings('form').submit();
+        // }
+
+        $(document).ready(function(){
+
+            $('.share').on('click', function(e){
+                e.preventDefault();
+
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(window.location.href).select();
+                document.execCommand("copy");
+                $temp.remove();
+                alert('Video URL copied to clipboard');
+            });
+
+
+            $('.save-to-playlist').on('click', function(e){
+                e.preventDefault();
+
+                $(this).siblings('form').submit();
+            });
+
+            $('.view-replies').on('click', function(e){
+                e.preventDefault();
+
+                $(this).siblings('.replies').removeClass('d-none');
+                $(this).hide();
+            });
         });
-
-        $('.view-replies').on('click', function(e){
-            e.preventDefault();
-
-            $(this).siblings('.replies').removeClass('d-none');
-            $(this).hide();
-        });
-    });
-    var $messages = $('.messages-content'),
-        d, h, m,
-        i = 0;
+        var $messages = $('.messages-content'),
+            d, h, m,
+            i = 0;
 
 
-</script>
+    </script>
 
 @endsection
 
