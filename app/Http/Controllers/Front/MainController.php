@@ -207,8 +207,8 @@ class MainController extends Controller
         }
 
         $banners = Banner::orderBy('order','asc')->get();
-
-        return view('front.home', compact([ 'banners']));
+        $recommendedVideos = VideoContent::inRandomOrder()->latest()->get();
+        return view('front.home', compact([ 'banners','recommendedVideos']));
 
     }
 }

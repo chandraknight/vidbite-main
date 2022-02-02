@@ -234,8 +234,6 @@
 </nav>
 <div class="container-fluid">
 
-    @section('content')
-
         <div id="carousalTop" class="carousel slide mt-5" data-ride="carousel">
             <ol class="carousel-indicators">
                 @foreach ($banners as $key => $banner)
@@ -253,8 +251,56 @@
             </div>
 
         </div>
-    @endsection
 
+    <div class="videos-row row justify-content-md-center">
+        <div class="col-lg-12">
+            <div class="heading">
+                <h2>Recommended For You</h2>
+            </div>
+            <div class="slick-slider">
+                <div class="row">
+
+                    @foreach ($recommendedVideos as $video)
+                        <div class="col-3 video-box">
+                            <div class="boxImg">
+                                <img width="100%" height="150" src="{{ asset($video->thumbnail) }}" data-href="{{ URL::to('/video', $video->id) }}"
+                                     class="video-list clickable" />
+                                {{-- <video controls width='100%' id="recommendedVideoPlayer{{ $video->id }}" height='200px' onclick="playVideo(this.id);">
+                                    <source src="{{ asset($video->video_path) }}">
+                                </video> --}}
+                                <div class="pt-3 video-content">
+                                <!--  <div class="title">
+                                        <div>
+                                            {{ $video->title }}
+                                        <p class="float-right">
+@if (isset($video->views))
+                                    {{ sizeof($video->views) }} Views
+                                                @endif
+                                        </p>
+                                    </div>
+                                </div> -->
+                                    <div class="details mt-1">
+                                        <div class="profile-pic">
+                                            <img src="{{ asset('assets/front/images/dummy.jpg') }}" alt="">
+                                        </div>
+                                        <div class="video-details">
+                                            <div>{{ $video->title }}</div>
+
+                                        </div>
+                                        <p class="ml-auto">
+                                            @if (isset($video->views))
+                                                {{ sizeof($video->views) }} Views
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
@@ -377,16 +423,13 @@
 </script>
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}" defer></script>
-@yield('jscripts')
 
-@stack('scripts')
-@push('scripts')
-    <script>
-        $( function() {
-            $('.slick-track').addClass('float-left');
-        });
-    </script>
-@endpush
+<script>
+    $( function() {
+        $('.slick-track').addClass('float-left');
+    });
+</script>
+
 </body>
 
 </html>
