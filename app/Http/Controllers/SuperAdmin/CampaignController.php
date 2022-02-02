@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CampaignController extends Controller
 {
@@ -56,8 +57,17 @@ class CampaignController extends Controller
             'ad_format' => 'required|string|max:255',
             'ad_media' => 'required',
         ]);
+        $input = $request->all();
+        if ($request->hasFile('ad_media')) {
+            $video = $request->file('ad_media');
+            $videoName = time() . '_' . $video->getClientOriginalName();
+            $videoPath = public_path() . '/uploads/ads/';
+            $video->move($videoPath, $videoName);
+            // $videoModel->video_path = '/uploads/ads/' . $videoName;
 
-        Campaign::create($request->all() + ['remaining_budget' => $request->budget,'user_id'=>Auth::user()->id]);
+            $input['ad_media'] = '/uploads/ads/' . $videoName;
+        }
+        Campaign::create($input + ['remaining_budget' => $request->budget,'user_id'=>Auth::user()->id]);
         return redirect('super-admin/campaigns');
     }
 
@@ -113,7 +123,20 @@ class CampaignController extends Controller
         ]);
 
         $campaign = Campaign::find($id);
-        $campaign->update($request->all());
+        $input = $request->all();
+        if ($request->hasFile('ad_media')) {
+            if ($campaign->ad_media != null && file_exists(public_path().$campaign->ad_media)) {
+                unlink(public_path().$campaign->ad_media);
+            }
+            $video = $request->file('ad_media');
+            $videoName = time() . '_' . Str::slug($video->getClientOriginalName()).'.'.$video->getClientOriginalExtension();
+            $videoPath = public_path() . '/uploads/ads/';
+            $video->move($videoPath, $videoName);
+            // $videoModel->video_path = '/uploads/ads/' . $videoName;
+
+            $input['ad_media'] = '/uploads/ads/' . $videoName;
+        }
+        $campaign->update($input);
 
         return redirect('super-admin/campaigns');
     }

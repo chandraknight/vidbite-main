@@ -486,7 +486,7 @@
                 </video>
                 <div id="my_overlay">
                     <div class="overlay-in">
-                        dd($campaign)
+
                     </div>
                     <div class="overlay-close"></div>
                     <div class="overlay-count"></div>
@@ -754,35 +754,43 @@
     }
 
     // This function runs when page is done loading
-    $(function() {
+    $(document).ready(function() {
 
         var elements = document.getElementsByClassName("recommended-videos");
 
-        var dataType = "json";//expected datatype from server
+        // var dataType = "json";//expected datatype from server
         var headers = { 'X-CSRF-TOKEN': $('input[name="_token"]').val()};
         var adPath = '';
+
         $.ajax({
             url: '/play-ad',   //url of the server which stores time data
             headers: headers,
-            dataType: dataType,
-            success: function(data,status){
+            // dataType: dataType,
+            success: function(data){
+
                 adPath = `{{ asset('${data.substr(1)}') }}`;
+
+            },
+            error:  function(data,status){
+
+              console.log('response',data);
+              console.log('status',status);
             },
             async: false // <- this turns it into synchronous
         });
-        console.log(adPath);
+
         var loadVideoFunction = function(vid_id, vid_time) {
             var myvideo = document.getElementById(vid_id);
             videoStartTime = vid_time;
             myvideo.currentTime = videoStartTime;
-            console.log('Current Time', myvideo.currentTime);
-            console.log('Video ID:', vid_id);
+
             // $('.video').click();
             // video = jQuery('#'+vid_id).get()[0];
             showAd(vid_id)
             // $('#'+vid_id)[0].addEventListener('play', event => {console.log('PLAY');});
         };
         var showAd = function(vid_id) {
+
             var myvideo = document.getElementById(vid_id);
             if(adPath != ''){
                 $("#my_overlay").fadeIn();
@@ -799,7 +807,13 @@
                     }
                 }, 1000);
                 myvideo.pause();
-                $('.overlay-in').html('<iframe class="responsive-iframe" autoplay="true" src="'+adPath+'"></iframe>');
+
+                $('.overlay-in').html(`
+                    '<video  controls   src="${adPath}" id="addedVideo" autoplay>
+                    <source src="${adPath}" type="video/mp4"></video>`);
+
+               document.getElementById('addedVideo').play();
+
             }else{
                 myvideo.play();
             }
@@ -842,6 +856,7 @@
 
 
         $('.overlay-close').click(function () {
+            $('.overlay-in').html('');
             $("#my_overlay").fadeOut();
             let vid = document.getElementById(vid_id);
             vid.play();

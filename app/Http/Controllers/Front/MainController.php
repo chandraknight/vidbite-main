@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\History;
 use App\Models\Notifies;
 use App\Models\User;
@@ -75,7 +76,9 @@ class MainController extends Controller
             $video->record =  $record;
         }
 
-        return view('front.index', compact(['user', 'recommendedVideos', 'watchlistVideos', 'contWatchesVideos', 'trendingVideos']));
+        $banners = Banner::orderBy('order','asc')->get();
+
+        return view('front.index', compact(['user', 'recommendedVideos', 'watchlistVideos', 'contWatchesVideos', 'trendingVideos','banners']));
     }
 
     public function playVideo(Request $request, $id)
@@ -189,4 +192,23 @@ class MainController extends Controller
     //         $notification->save();
     //     }
     // }
+
+    public function home()
+    {
+        $keywords = [];
+        $viewCount = View::get();
+        $searchkeywords= SearchKeywords::select('keywords')->get();
+        //dd($searchkeywords);
+        if(!empty($searchkeywords)) {
+            foreach ($searchkeywords as $value) {
+                array_push($keywords, $value);
+            }
+            //dd($keywords);
+        }
+
+        $banners = Banner::orderBy('order','asc')->get();
+
+        return view('front.home', compact([ 'banners']));
+
+    }
 }

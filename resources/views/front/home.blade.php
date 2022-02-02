@@ -19,7 +19,7 @@
     {{-- <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
     <!-- Add the slick-theme.css if you want default styling -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/> --}}
-    <link rel="stylesheet" href="{{ asset('assets/vendor/slick/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/front/slick/slick.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/slick/slick-theme.css') }}">
     <style>
         .comment-div{
